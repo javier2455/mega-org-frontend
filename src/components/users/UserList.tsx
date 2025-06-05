@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { User } from '@/types/user';
+import { translateBadge } from '@/lib/translate';
 
 interface UserListProps {
   users: User[];
@@ -98,7 +99,7 @@ export function UserList({
                     </td>
                     <td className='px-6 py-4 align-middle'>
                       <span className='inline-block rounded border border-cyan-400/40 text-cyan-300 px-3 py-1 text-xs font-semibold transition-all duration-200 hover:bg-cyan-400/10 hover:border-cyan-400/80'>
-                        {user.role}
+                        {translateBadge(user.role)}
                       </span>
                     </td>
                     <td className='px-4 py-4 align-middle'>

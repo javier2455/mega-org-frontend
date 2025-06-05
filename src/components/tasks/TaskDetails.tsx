@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import type { Task } from '@/types/task';
 import CustomBadge from '../shared/CustomBadge';
+import { translateBadge } from '@/lib/translate';
 
 interface TaskDetailsProps {
   task: Task | null;
@@ -38,13 +39,13 @@ export function TaskDetails({ task, open, onClose }: TaskDetailsProps) {
           <div className='grid grid-cols-2 gap-2'>
             <div className='flex flex-col items-start gap-1'>
               <h4 className='text-sm font-medium text-cyan-300 mb-1'>Estado</h4>
-              <CustomBadge label={task.status} />
+              <CustomBadge label={translateBadge(task.status)} />
             </div>
             <div className='flex flex-col items-start gap-1'>
               <h4 className='text-sm font-medium text-cyan-300 mb-1'>
                 Prioridad
               </h4>
-              <CustomBadge label={task.priority} />
+              <CustomBadge label={translateBadge(task.priority)} />
             </div>
           </div>
         </div>

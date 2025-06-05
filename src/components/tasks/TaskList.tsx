@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import type { Task } from '@/types/task';
 import CustomBadge from '../shared/CustomBadge';
+import { translateBadge } from '@/lib/translate';
 
 interface TaskListProps {
   tasks: Task[];
@@ -100,10 +101,10 @@ export function TaskList({
                       {task.assignedTo.fullname}
                     </td>
                     <td className='px-6 py-4 align-middle'>
-                      <CustomBadge label={task.status} />
+                      <CustomBadge label={translateBadge(task.status)} />
                     </td>
                     <td className='px-6 py-4 align-middle'>
-                      <CustomBadge label={task.priority} />
+                      <CustomBadge label={translateBadge(task.priority)} />
                     </td>
                     <td className='px-4 py-4 align-middle'>
                       <DropdownMenu>

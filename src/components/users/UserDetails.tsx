@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { userService } from '@/services/userService';
 import { Loader2, X } from 'lucide-react';
 import type { User } from '@/types/user';
+import { translateBadge } from '@/lib/translate';
 
 interface UserDetailsDrawerProps {
   userId: number | null;
@@ -58,7 +59,7 @@ export function UserDetailsDrawer({ userId, open, onClose }: UserDetailsDrawerPr
             </div>
             <div>
               <span className='block text-xs text-cyan-300 mb-1'>Rol</span>
-              <span className='text-white'>{user.role}</span>
+              <span className='text-white'>{translateBadge(user.role)}</span>
             </div>
             <div>
               <span className='block text-xs text-cyan-300 mb-1'>Creado</span>
