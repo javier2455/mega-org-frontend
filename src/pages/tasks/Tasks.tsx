@@ -1,19 +1,26 @@
 import { useState, useEffect } from 'react';
 import { TaskList } from '@/components/tasks/TaskList';
 import { TaskDetails } from '@/components/tasks/TaskDetails';
+import TaskCRUD from '@/components/tasks/TaskCRUD';
 import { taskService } from '@/services/taskService';
+import { userService } from '@/services/userService';
 import type { Task } from '@/types/task';
+import type { User } from '@/types/user';
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [crudOpen, setCrudOpen] = useState(false);
+  const [crudMode, setCrudMode] = useState<'create' | 'edit' | 'delete'>('create');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  // Cargar tareas al montar el componente
+  // Cargar tareas y usuarios al montar el componente
   useEffect(() => {
     loadTasks();
+    loadUsers();
   }, []);
 
   const loadTasks = async () => {
@@ -29,14 +36,27 @@ export default function Tasks() {
     }
   };
 
+  const loadUsers = async () => {
+    try {
+      const usersData = await userService.getUsers();
+      setUsers(usersData);
+    } catch {
+      console.error('Error al cargar usuarios');
+    }
+  };
+
   // Manejar eliminación de tareas
-  const handleDelete = async (task: Task) => {
-    console.log(task);
+  const handleDelete = (task: Task) => {
+    setSelectedTask(task);
+    setCrudMode('delete');
+    setCrudOpen(true);
   };
 
   // Manejar edición de tareas
   const handleEdit = (task: Task) => {
-    console.log(task);
+    setSelectedTask(task);
+    setCrudMode('edit');
+    setCrudOpen(true);
   };
 
   // Manejar detalles de tareas
@@ -47,9 +67,10 @@ export default function Tasks() {
 
   // Manejar creación de tareas
   const handleCreate = () => {
-    console.log('create');
+    setSelectedTask(null);
+    setCrudMode('create');
+    setCrudOpen(true);
   };
-
 
   return (
     <div className='space-y-4'>
@@ -63,10 +84,19 @@ export default function Tasks() {
         onCreate={handleCreate}
       />
       <TaskDetails
-        task={selectedTask ? selectedTask : null}
+        task={selectedTask}
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
       />
+      {crudOpen && (
+        <TaskCRUD
+          mode={crudMode}
+          task={selectedTask}
+          users={users}
+          onClose={() => setCrudOpen(false)}
+          reloadTasks={loadTasks}
+        />
+      )}
     </div>
   );
 }

@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -22,25 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { userService } from '@/services/userService';
+import { createUserSchema, editUserSchema, type CreateUserForm, type EditUserForm } from '@/schemas/user.schema';
 
-const createUserSchema = z.object({
-  fullname: z.string().min(1, 'El nombre completo es requerido'),
-  user: z.string().min(1, 'El usuario es requerido'),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
-  role: z.string().min(1, 'El rol es requerido'),
-});
 
-const editUserSchema = createUserSchema.extend({
-  password: z
-    .string()
-    .min(6, 'La contraseña debe tener al menos 6 caracteres')
-    .optional()
-    .nullable()
-    .or(z.literal('')),
-});
-
-type CreateUserForm = z.infer<typeof createUserSchema>;
-type EditUserForm = z.infer<typeof editUserSchema>;
 
 interface UserCRUDProps {
   mode: 'create' | 'edit' | 'delete';
@@ -97,7 +81,6 @@ export default function UserCRUD({
   // Crear usuario
   const onSubmitCreate = async (data: CreateUserForm) => {
     try {
-      const { userService } = await import('@/services/userService');
       await userService.createUser(data);
       toast.success('Usuario creado correctamente');
       onClose();
@@ -113,7 +96,6 @@ export default function UserCRUD({
   const onSubmitEdit = async (data: EditUserForm) => {
     if (!user) return;
     try {
-      const { userService } = await import('@/services/userService');
       const updateData = {
         ...data,
         password: data.password || undefined,
@@ -132,7 +114,6 @@ export default function UserCRUD({
   const handleDelete = async () => {
     if (!user) return;
     try {
-      const { userService } = await import('@/services/userService');
       await userService.deleteUser(user.id);
       toast.success('Usuario eliminado correctamente');
       onClose();
