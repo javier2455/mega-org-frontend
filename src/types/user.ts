@@ -1,10 +1,11 @@
-import type { Task } from "./task";
+import type { Task } from './task';
 
 export interface User {
   id: number;
   user: string;
   fullname: string;
   role: string;
+  avatarUrl: string;
   tasks: Task[];
   createdAt: string;
   updatedAt: string;
@@ -27,6 +28,7 @@ export interface CreateUserData {
   password: string;
   fullname: string;
   role: string;
+  avatarUrl?: string;
 }
 
 export interface UpdateUserData {
@@ -34,4 +36,5 @@ export interface UpdateUserData {
   password?: string;
   fullname?: string;
   role?: string;
-} 
+  avatarUrl?: string;
+}

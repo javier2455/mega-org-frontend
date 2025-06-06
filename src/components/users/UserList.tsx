@@ -69,7 +69,7 @@ export function UserList({
             <table className='w-full text-sm'>
               <thead>
                 <tr className='bg-[#20243a]'>
-                  <th className='h-14 px-6 text-left align-middle font-semibold text-cyan-300 tracking-wide text-base rounded-tl-xl'>
+                  <th className='h-14 px-6 text-left align-middle font-semibold text-cyan-300 tracking-wide text-base rounded-tl-xl hidden md:block'>
                     Nombre
                   </th>
                   <th className='h-14 px-6 text-left align-middle font-semibold text-cyan-300 tracking-wide text-base'>

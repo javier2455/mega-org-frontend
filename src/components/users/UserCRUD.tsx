@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import { useEffect, useState } from 'react';
 import type { User } from '@/types/user';
 import { toast } from 'sonner';
 import {
@@ -22,9 +22,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { userService } from '@/services/userService';
-import { createUserSchema, editUserSchema, type CreateUserForm, type EditUserForm } from '@/schemas/user.schema';
-
-
+import {
+  createUserSchema,
+  editUserSchema,
+  type CreateUserForm,
+  type EditUserForm,
+} from '@/schemas/user.schema';
+import { API_URL } from '@/types/url';
 
 interface UserCRUDProps {
   mode: 'create' | 'edit' | 'delete';
@@ -39,6 +43,9 @@ export default function UserCRUD({
   onClose,
   reloadUsers,
 }: UserCRUDProps) {
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
   // Formulario para crear usuario
   const {
     register: registerCreate,
@@ -81,14 +88,24 @@ export default function UserCRUD({
   // Crear usuario
   const onSubmitCreate = async (data: CreateUserForm) => {
     try {
-      await userService.createUser(data);
+      const formData = new FormData();
+      formData.append('fullname', data.fullname);
+      formData.append('user', data.user);
+      formData.append('password', data.password);
+      formData.append('role', data.role);
+      if (avatarFile) {
+        formData.append('avatar', avatarFile);
+      }
+      await userService.createUser(formData);
       toast.success('Usuario creado correctamente');
       onClose();
       await reloadUsers();
     } catch (err: unknown) {
       console.log(err);
       const error = err as { response?: { data?: { message?: string } } };
-      toast.error(error?.response?.data?.message || 'Error al crear el usuario');
+      toast.error(
+        error?.response?.data?.message || 'Error al crear el usuario',
+      );
     }
   };
 
@@ -96,11 +113,17 @@ export default function UserCRUD({
   const onSubmitEdit = async (data: EditUserForm) => {
     if (!user) return;
     try {
-      const updateData = {
-        ...data,
-        password: data.password || undefined,
-      };
-      await userService.updateUser(user.id, updateData);
+      const formData = new FormData();
+      formData.append("fullname", data.fullname);
+      formData.append("user", data.user);
+      formData.append("role", data.role);
+      if (data.password) {
+        formData.append("password", data.password);
+      }
+      if (avatarFile) {
+        formData.append("avatar", avatarFile);
+      }
+      await userService.updateUser(user.id, formData);
       toast.success('Usuario actualizado correctamente');
       onClose();
       await reloadUsers();
@@ -121,6 +144,14 @@ export default function UserCRUD({
     } catch (err: unknown) {
       console.log(err);
       toast.error('Error al eliminar el usuario');
+    }
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
     }
   };
 
@@ -226,6 +257,25 @@ export default function UserCRUD({
                 </p>
               )}
             </div>
+            <div className='space-y-2'>
+              <Label htmlFor='avatar' className='text-cyan-300 font-medium'>
+                Avatar
+              </Label>
+              <Input
+                id='avatar'
+                type='file'
+                accept='image/*'
+                onChange={handleAvatarChange}
+                className='text-white'
+              />
+              {avatarPreview && (
+                <img
+                  src={avatarPreview}
+                  alt='Avatar preview'
+                  className='size-20 rounded-full mt-2 object-cover border-2 border-cyan-600'
+                />
+              )}
+            </div>
             <div className='flex justify-end'>
               <Button
                 type='submit'
@@ -250,8 +300,11 @@ export default function UserCRUD({
               Editar usuario
             </DialogTitle>
           </DialogHeader>
-          <form className='space-y-5' onSubmit={handleSubmitEdit(onSubmitEdit)}>
-            <div className='space-y-2'>
+          <form
+            className='space-y-5'
+            onSubmit={handleSubmitEdit(onSubmitEdit)}
+          >
+            <div className='space-y-2 '>
               <Label
                 htmlFor='edit-fullname'
                 className='text-cyan-300 font-medium'
@@ -346,6 +399,31 @@ export default function UserCRUD({
                   {editErrors.role.message}
                 </p>
               )}
+            </div>
+            <div className='space-y-2'>
+              <Label htmlFor='avatar' className='text-cyan-300 font-medium'>
+                Avatar
+              </Label>
+              <Input
+                id='avatar'
+                type='file'
+                accept='image/*'
+                onChange={handleAvatarChange}
+                className='text-white'
+              />
+              {avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt='Avatar preview'
+                  className='w-20 h-20 rounded-full mt-2 object-cover border-2 border-cyan-600'
+                />
+              ) : user.avatarUrl ? (
+                <img
+                  src={`${API_URL}${user.avatarUrl}`}
+                  alt='Avatar actual'
+                  className='w-20 h-20 rounded-full mt-2 object-cover border-2 border-cyan-600'
+                />
+              ) : null}
             </div>
             <div className='flex justify-end gap-3'>
               <Button type='button' variant='cancel' onClick={onClose}>

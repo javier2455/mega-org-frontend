@@ -149,14 +149,14 @@ export default function TaskCRUD({
   if (mode === 'create') {
     return (
       <Dialog open onOpenChange={onClose}>
-        <DialogContent className='bg-[#181c2f] border-[#23263a] shadow-2xl rounded-lg p-8 min-w-[1024px]'>
+        <DialogContent className='bg-[#181c2f] border-[#23263a] shadow-2xl rounded-lg  p-8 xl:min-w-[1024px]'>
           <DialogHeader className='mb-6 border-b border-[#23263a] pb-4'>
             <DialogTitle className='text-2xl font-bold text-white'>
               Crear nueva tarea
             </DialogTitle>
           </DialogHeader>
           <form
-            className='grid grid-cols-2 gap-6'
+            className='grid grid-cols-1 lg:grid-cols-2 gap-6'
             onSubmit={handleSubmitCreate(onSubmitCreate)}
           >
             {/* Columna izquierda */}
@@ -177,6 +177,43 @@ export default function TaskCRUD({
                     {createErrors.title.message}
                   </p>
                 )}
+              </div>
+              <div className='flex flex-col md:hidden gap-4'>
+                {/* Descripción */}
+                <div className='space-y-2 flex-1'>
+                  <Label
+                    htmlFor='description'
+                    className='text-cyan-300 font-medium'
+                  >
+                    Descripción
+                  </Label>
+                  <Textarea
+                    id='description'
+                    {...registerCreate('description')}
+                    className='text-white bg-[#101223] border border-[#23263a] rounded-md px-3 py-2 min-h-[100px] resize-vertical w-full'
+                  />
+                  {createErrors.description && (
+                    <p className='text-xs text-red-400 mt-1'>
+                      {createErrors.description.message}
+                    </p>
+                  )}
+                </div>
+                {/* Notas */}
+                <div className='space-y-2 flex-1'>
+                  <Label htmlFor='notes' className='text-cyan-300 font-medium'>
+                    Notas
+                  </Label>
+                  <Textarea
+                    id='notes'
+                    {...registerCreate('notes')}
+                    className='text-white bg-[#101223] border border-[#23263a] rounded-md px-3 py-2 min-h-[100px] resize-vertical w-full'
+                  />
+                  {createErrors.notes && (
+                    <p className='text-xs text-red-400 mt-1'>
+                      {createErrors.notes.message}
+                    </p>
+                  )}
+                </div>
               </div>
               {/* Fecha límite */}
               <div className='space-y-2'>
@@ -225,8 +262,8 @@ export default function TaskCRUD({
                 )}
               </div>
               {/* Estado y Prioridad */}
-              <div className='flex gap-4'>
-                <div className='flex-1 space-y-2'>
+              <div className='flex flex-col lg:flex-row gap-4'>
+                <div className='flex-1  space-y-2'>
                   <Label htmlFor='status' className='text-cyan-300 font-medium'>
                     Estado
                   </Label>
@@ -320,7 +357,7 @@ export default function TaskCRUD({
               </div>
             </div>
             {/* Columna derecha */}
-            <div className='flex flex-col gap-4'>
+            <div className='flex-col gap-4 hidden md:flex'>
               {/* Descripción */}
               <div className='space-y-2 flex-1'>
                 <Label
@@ -384,14 +421,14 @@ export default function TaskCRUD({
   if (mode === 'edit' && task) {
     return (
       <Dialog open onOpenChange={onClose}>
-        <DialogContent className='bg-[#181c2f] border-[#23263a] shadow-2xl rounded-lg p-8 min-w-[1024px]'>
+        <DialogContent className='bg-[#181c2f] border-[#23263a] shadow-2xl rounded-lg p-8 xl:min-w-[1024px]'>
           <DialogHeader className='mb-6 border-b border-[#23263a] pb-4'>
             <DialogTitle className='text-2xl font-bold text-white'>
               Editar tarea
             </DialogTitle>
           </DialogHeader>
           <form
-            className='grid grid-cols-2 gap-6'
+            className='grid grid-cols-1 lg:grid-cols-2 gap-6'
             onSubmit={handleSubmitEdit(onSubmitEdit)}
           >
             {/* Columna izquierda */}

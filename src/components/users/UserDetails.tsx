@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { userService } from '@/services/userService';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, User2, X } from 'lucide-react';
 import type { User } from '@/types/user';
 import { translateBadge } from '@/lib/translate';
 import CustomBadge from '../shared/CustomBadge';
+import { API_URL } from '@/types/url';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 interface UserDetailsDrawerProps {
   userId: number | null;
@@ -62,11 +64,21 @@ export function UserDetailsDrawer({
           <div className='text-red-400 text-center'>{error}</div>
         ) : user ? (
           <div className='space-y-4'>
-            <div>
+            <div className=''>
               <span className='block text-xs text-cyan-300 mb-1'>
                 Nombre completo
               </span>
-              <span className='text-white font-medium'>{user.fullname}</span>
+              <div className='flex items-center justify-between gap-2'>
+                <span className='text-white font-medium'>{user.fullname}</span>
+                {user.avatarUrl && (
+                  <Avatar className='size-10'>
+                    <AvatarImage src={`${API_URL}${user.avatarUrl}`} />
+                    <AvatarFallback>
+                      <User2 />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+              </div>
             </div>
             <div>
               <span className='block text-xs text-cyan-300 mb-1'>Usuario</span>
@@ -110,7 +122,9 @@ export function UserDetailsDrawer({
                         <tr key={task.id} className='h-12'>
                           <td className='text-white py-2'>{task.title}</td>
                           <td className=' py-2'>
-                            <CustomBadge label={translateBadge(task.priority)} />
+                            <CustomBadge
+                              label={translateBadge(task.priority)}
+                            />
                           </td>
                         </tr>
                       ))}

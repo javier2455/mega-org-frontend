@@ -1,5 +1,5 @@
 import api from './api';
-import type { User, UserResponse, CreateUserData, UpdateUserData, SingleUserResponse } from '@/types/user';
+import type { User, UserResponse, SingleUserResponse } from '@/types/user';
 
 export const userService = {
   // Obtener todos los usuarios
@@ -15,14 +15,18 @@ export const userService = {
   },
 
   // Crear un nuevo usuario
-  createUser: async (userData: CreateUserData): Promise<User> => {
-    const response = await api.post<UserResponse>('/users', userData);
+  createUser: async (formData: FormData): Promise<User> => {
+    const response = await api.post<UserResponse>('/users', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data.data[0];
   },
 
   // Actualizar un usuario
-  updateUser: async (id: number, userData: UpdateUserData): Promise<User> => {
-    const response = await api.put<UserResponse>(`/users/${id}`, userData);
+  updateUser: async (id: number, formData: FormData): Promise<User> => {
+    const response = await api.put<UserResponse>(`/users/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data.data[0];
   },
 
@@ -30,4 +34,4 @@ export const userService = {
   deleteUser: async (id: number): Promise<void> => {
     await api.delete(`/users/${id}`);
   },
-}; 
+};
